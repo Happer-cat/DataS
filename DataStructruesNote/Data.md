@@ -137,6 +137,7 @@ private void bubbleUp() {
 ```
 通过remove实现降序排序
 
+
 Heapify算法 将数组转变成为堆
 ```java
     public static void heapify(int[] arr) {
