@@ -13,9 +13,21 @@ import java.util.*;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        int[] numbers = {5, 3, 2, 4, 1, 8,9,11,0,6};
-        MAXHeap.heapify(numbers);
-        System.out.println(numbers);
+        Graph graph = new Graph();
+        var str1 = "a";
+        var str2 = "b";
+        var str3 = "c";
+        var str4 = "d";
+        var str5 = "e";
+        graph.addNode(str1);
+        graph.addNode(str2);
+        graph.addNode(str3);
+        graph.addNode(str4);
+        graph.addNode(str5);
+        graph.addEdge(str1,str2);
+        graph.addEdge(str2,str3);
+        graph.addEdge(str1,str3);
+        System.out.println(graph.isCycleRecursive());
     }
 
 

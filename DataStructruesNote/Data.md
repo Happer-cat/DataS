@@ -1,3 +1,5 @@
+#
+![img_17.png](img_17.png)
 # 1![img.png](img.png)
 ![img_1.png](img_1.png)
 线性结构：array stack linklist queue hashtable set collection!
@@ -137,6 +139,7 @@ private void bubbleUp() {
 ```
 通过remove实现降序排序
 
+
 Heapify算法 将数组转变成为堆
 ```java
     public static void heapify(int[] arr) {
@@ -165,3 +168,178 @@ Heapify算法 将数组转变成为堆
 第一个叶子结点是n/2
 # tries
 ![img_11.png](img_11.png)
+
+特别适合字符串的存储和检索
+
+```java
+    private class Node {
+        char value;
+        HashMap<Character, Node> children = new HashMap<>();
+        Boolean isEndOfWord = false;
+        Node(char value) {
+            this.value = value;
+        }
+        Node() {}
+
+        @Override
+        public String toString() {
+            return "Node{" +
+                    "value=" + value +
+                    '}';
+        }
+    }
+```
+使用hashtable处理问题
+
+递归调用导致的post traverse and pre-traverse
+只是输入点的不同
+```java
+    public void traverse(Node node) {
+
+            if(node.isEndOfWord) {
+                return;
+            }
+            for(var child : node.children.values()) {
+                traverse(child);
+            }
+        System.out.print(node.value + " ");
+    }
+```
+但是在tries中，我们把根节点置为null，在各种操作的时候要特别注意空指针异常
+
+# Graph
+![img_14.png](img_14.png)
+邻接表，先用hashtable定位给定点在表中的位置
+space=V+E
+![img_15.png](img_15.png)
+![img_16.png](img_16.png)
+广度队列 深度栈
+判断是否出来既要看vistited 也要看存储的数据结构
+```java
+
+    public void depthFirstSearchIterative(String label) {
+        if (!nodes.containsKey(label)) return;
+        var node =  nodes.get(label);
+        Stack<Node> stack = new Stack<>();
+        Set<String> visited = new HashSet<>();
+        stack.push(node);
+
+        while (!stack.empty()) {
+            Node top = stack.pop();
+            visited.add(top.label);
+            System.out.println(top.label);
+            for (var edge : adjacency.get(top)) {
+                if (!visited.contains(edge.label)){
+                    stack.push(edge);
+                }
+            }
+
+        }
+
+    }
+```
+Topological Sorting 
+需要注意的我们在处理的时候还要看点是否存在stack中
+![img_18.png](img_18.png)
+为了正确处理图的路径
+![img_19.png](img_19.png)
+### Detecting cycle graph
+![img_20.png](img_20.png)
+![img_21.png](img_21.png)
+```java
+public Boolean isCycle(){
+        HashSet<String> visited = new HashSet<>();
+        Stack<String> visiting = new Stack<>();
+        HashSet<String> all = new HashSet<>(nodes.keySet());
+        for(var label :all) {
+            Stack<String> stack = new Stack<>();
+            stack.push(label);
+            visiting.add(label);
+            while (!stack.empty()) {
+                var current = stack.peek();
+                Boolean hasUnvisitedNeighbors = false;
+                for (var neighbor : adjacency.get(nodes.get(current))) {
+                    if (visited.contains(neighbor.label)) {continue;}
+                    if (visiting.contains(neighbor.label)){return true;}
+                    visiting.add(neighbor.label);
+                    stack.push(neighbor.label);
+                    hasUnvisitedNeighbors = true;
+                    break;
+                }
+                if(!hasUnvisitedNeighbors) {
+                    stack.pop();
+                    visiting.remove(current);
+                    visited.add(current);
+                }
+            }
+        }
+        return false;
+    }
+```
+不采用递归解决
+![img_22.png](img_22.png)多用迭代器
+![img_23.png](img_23.png)
+
+
+![img_24.png](img_24.png)
+
+如果存在那么就一定存在，如果不存在，但是可能存在
+
+![img_25.png](img_25.png)
+![img_26.png](img_26.png)
+
+## Dijkstra
+
+确定处理问题所需要的信息
+要用到优先队列
+```java
+    public int dijkstra(String from, String to) {
+        HashSet<Node> visited = new HashSet<>();
+        HashMap<Node,Integer> distances = new HashMap<>();
+        HashMap<Node,Node> previous = new HashMap<>();
+        PriorityQueue<Node> pq = new PriorityQueue<>(Comparator.comparingInt(distances::get));
+        var current = nodes.get(from);
+        previous.put(current,current);
+        for (var node:nodes.values())
+        {
+            distances.put(node, Integer.MAX_VALUE);
+        }
+        distances.replace(current, 0);
+        pq.add(current);
+        while (!pq.isEmpty()) {
+            current = pq.poll();
+            visited.add(current);
+            var list =adjacencyList.get(current);
+            for (var item : list) {
+                if (visited.contains(item.to)) continue;
+                Integer newDistance = distances.get(current)+item.weight;
+                if (newDistance < distances.get(item.to)) {
+                    distances.replace(item.to, newDistance);
+                    previous.put(item.to, current);
+                }
+                pq.add(item.to);
+            }
+        }
+        var toNode = nodes.get(to);
+        var previousNode = previous.get(toNode);
+        System.out.println(distances.get(nodes.get(to)));
+        System.out.println(toNode.label+"");
+        while(toNode!=previousNode){
+            System.out.println(previousNode.label+"");
+            var temp = previousNode;
+            previousNode = previous.get(previousNode);
+            toNode = temp;
+
+        }
+        return distances.get(nodes.get(to));
+    }
+
+```
+![img_27.png](img_27.png)
+![img_28.png](img_28.png)
+![img_29.png](img_29.png)
+![img_30.png](img_30.png)
+![img_31.png](img_31.png)
+![img_32.png](img_32.png)
+![img_33.png](img_33.png)
+![img_34.png](img_34.png)
